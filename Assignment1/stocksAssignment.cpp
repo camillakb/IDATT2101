@@ -2,13 +2,14 @@
 #include <iostream>
 #include <stdlib.h>
 
+#define length 10000
+
 int main (int argc, char *argv[]) {
     
     int profit;
     int maxProfit = 0;
     int buyDay = 0;
     int sellDay = 0;
-    int length = 1000;
     int stocksDaily[length];
     
     //Populating the stocksDaily array with random values between -10 and 10.
