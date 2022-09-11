@@ -134,7 +134,77 @@ int dualPivotPartition(int* arr, int low, int high, int* lp) {
     return g;
 }
 
+//Method to find the sum of the elements in an array.
+int checkSums(int *list, int n) {
+    int sum = 0;
+
+    for (int i = 0; i < n; i++) {
+        sum += list[i];
+    }
+
+    return sum;
+}
+
+//Method to see if the elements in a list are in the correct order after being sorted.
+bool checkOrder(int *list, int n) {
+    for (int i = 0; i < n - 1; i++) {
+        if (list[i + 1] < list [i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 int main(int argc, char const *argv[]) {
+    //Test data for the checkSums()- and checkOrder()-methods.
+    int testList1[10] = {8, 6, 3, 7, 4, 2, 6, 2, 8, 2};
+    int testList2[10] = {2, 6, 4, 9, 1, 7, 4, 7, 1, 9};
+
+    std::cout << "Test list for single pivot quicksort: \n";
+
+    for (int i = 0; i < 10; i++) {
+        std::cout << testList1[i] << ", ";
+    } 
+
+    std::cout << "\n\nSize: " << *(&testList1 + 1) - testList1;
+
+    int checkSums1 = checkSums(testList1, (*(&testList1 + 1) - testList1));
+    int checkSums2 = checkSums(testList2, (*(&testList2 + 1) - testList2));
+    bool checkOrder1 = checkOrder(testList1, (*(&testList1 + 1) - testList1));
+    bool checkOrder2 = checkOrder(testList2, (*(&testList2 + 1) - testList2));
+
+    singlePivotQuicksort(testList1, 0, (*(&testList1 + 1) - testList1) - 1);
+    dualPivotQuicksort(testList2, 0 , (*(&testList2 + 1) - testList2) - 1);
+
+    //Printing the results of the tests concerning single pivot quicksort.
+    std::cout << "\nSum before sorting the list using single pivot quicksort: " << checkSums1 << "\n";
+    std::cout << "Sum after: " << checkSums(testList1, (*(&testList1 + 1) - testList1)) << "\n";
+    std::cout << "Was the list in the correct order before using single pivot quicksort? " << checkOrder1 << "\n";
+    std::cout << "Is the list in the correct order after using single pivot quicksort? " << checkOrder(testList1, (*(&testList1 + 1) - testList1)) << "\n\n";
+    std::cout << "List after single pivot quicksort: \n";
+
+    for (int i = 0; i < 10; i++) {
+        std::cout << testList1[i] << ", ";
+    }
+
+    std::cout << "\n\nTest list for dual pivot quicksort: \n";
+
+    for (int i = 0; i < 10; i++) {
+        std::cout << testList2[i] << ", ";
+    } 
+
+    //Printing the results of the tests concerning dual pivot quicksort.
+    std::cout << "\nSum before sorting the list using dual pivot quicksort: " << checkSums2 << "\n";
+    std::cout << "Sum after: " << checkSums(testList2, (*(&testList2 + 1) - testList2)) << "\n";
+    std::cout << "Was the list in the correct order before using dual pivot quicksort? " << checkOrder2 << "\n";
+    std::cout << "Is the list in the correct order after using dual pivot quicksort? " << checkOrder(testList2, (*(&testList2 + 1) - testList2)) << "\n\n";
+    std::cout << "List after dual pivot quicksort: \n";
+
+    for (int i = 0; i < 10; i++) {
+        std::cout << testList2[i] << ", ";
+    }
+
     //Initialize two different lists of random integers with a size equal to the constant SIZE.
     srand(time(NULL));
     int* list1 = new int[SIZE];
@@ -148,19 +218,23 @@ int main(int argc, char const *argv[]) {
     //Initialize two different lists of random integers with several duplicates among the elements.
     int* listWithDuplicates1 = new int[SIZE];
     int* listWithDuplicates2 = new int[SIZE];
-    int range = 1000 - 50 + 1;
 
     for (int i = 0; i < SIZE; i++) {
-        listWithDuplicates1[i] = rand() % range;
-        listWithDuplicates2[i] = rand() % range; 
+        listWithDuplicates1[i] = 50 + (rand() % 950);
+        listWithDuplicates2[i] = 50 + (rand() % 950);
     }
 
     //Initialize two different lists of already sorted integers.
     int* sortedList1 = new int[SIZE];
     int* sortedList2 = new int[SIZE];
+
+    for (int i = 0; i < SIZE; i++) {
+        sortedList1[i] = rand();
+        sortedList2[i] = rand(); 
+    }
     
-    std::sort(sortedList1, sortedList1 + sizeof sortedList1);
-    std::sort(sortedList2, sortedList2 + sizeof sortedList2);
+    std::sort(sortedList1, sortedList1 + SIZE);
+    std::sort(sortedList2, sortedList2 + SIZE);    
 
     //Measure time for the single pivot quicksort for a list of random integers.
     auto start = std::chrono::high_resolution_clock::now();
@@ -199,12 +273,12 @@ int main(int argc, char const *argv[]) {
     auto timeUsedDualPivotSorted = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
     //Print results.
-    std::cout << "Time used for single pivot quicksort on list of random integers: " << timeUsedSinglePivotRandom.count() << " µs\n";
+    std::cout << "\n\nTime used for single pivot quicksort on list of random integers: " << timeUsedSinglePivotRandom.count() << " µs\n";
     std::cout << "Time used for dual pivot quicksort on list of random integers: " << timeUsedDualPivotRandom.count() << " µs\n\n";
     std::cout << "Time used for single pivot quicksort on list with duplicates: " << timeUsedSinglePivotDuplicate.count() << " µs\n";
     std::cout << "Time used for dual pivot quicksort on list with duplicates: " << timeUsedDualPivotDuplicate.count() << " µs\n\n";
     std::cout << "Time used for single pivot quicksort on a list that is already sorted: " << timeUsedSinglePivotSorted.count() << " µs\n";
-    std::cout << "Time used for dual pivot quicksort on a list that is already sorted: " << timeUsedDualPivotSorted.count() << " µs\n" << std::endl;
+    std::cout << "Time used for dual pivot quicksort on a list that is already sorted: " << timeUsedDualPivotSorted.count() << " µs" << std::endl;
 
     return 0;
 }
